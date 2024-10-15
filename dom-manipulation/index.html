@@ -1,81 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator</title>
-    <style>
-        /* Basic styling for the Dynamic Quote Generator */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        #quoteDisplay {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        #newQuoteSection {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-        }
-        #newQuoteSection input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        #addQuoteBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4caf50;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #addQuoteBtn:hover {
-            background-color: #45a049;
-        }
-        #newQuote {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #newQuote:hover {
-            background-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quote Generator</title>
 </head>
 <body>
-    <h1>Dynamic Quote Generator</h1>
-
-    <!-- Quote display area -->
-    <div id="quoteDisplay">Your quote will appear here.</div>
-    <button id="newQuote">Show New Quote</button>
-
-    <!-- Section for adding new quotes -->
-    <div id="newQuoteSection">
-        <input type="text" id="newQuoteText" placeholder="Enter a new quote" />
-        <input type="text" id="newQuoteCategory" placeholder="Enter quote category" />
-        <button id="addQuoteBtn">Add Quote</button>
-    </div>
-
-    <script src="script.js"></script>
+  <h1>Dynamic Quote Generator</h1>
+  <div id="quoteDisplay"></div>
+  <button id="newQuote">Show New Quote</button>
+  
+  <!-- Form for adding new quotes -->
+  <div>
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button onclick="addQuote()">Add Quote</button>
+  </div>
+  
+  <script src="script.js"></script>
 </body>
 </html>
