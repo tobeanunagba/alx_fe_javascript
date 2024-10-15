@@ -11,27 +11,28 @@ function saveQuotes() {
     localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
-// Function to fetch quotes from a mock server
-function fetchQuotesFromServer() {
-    fetch("https://jsonplaceholder.typicode.com/posts")
-        .then(response => response.json())
-        .then(data => {
-            const serverQuotes = data.map(item => ({
-                text: item.title,
-                category: "General" // You can set a default category or derive it from the data
-            }));
-            syncQuotes(serverQuotes);
-        })
-        .catch(error => console.error("Error fetching quotes from server:", error));
+// Fetch quotes from a mock server
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+        const data = await response.json();
+        const serverQuotes = data.map(item => ({
+            text: item.title,
+            category: "General" // Set a default category or derive it from the data
+        }));
+        await syncQuotes(serverQuotes);
+    } catch (error) {
+        console.error("Error fetching quotes from server:", error);
+    }
 }
 
 // Sync local quotes with server quotes
-function syncQuotes(serverQuotes) {
+async function syncQuotes(serverQuotes) {
     const existingQuotes = loadQuotes();
-    const updatedQuotes = existingQuotes.slice(); // Create a copy of existing quotes for updates
+    const updatedQuotes = [...existingQuotes]; // Create a copy of existing quotes for updates
     let conflicts = false;
 
-    serverQuotes.forEach(serverQuote => {
+    for (const serverQuote of serverQuotes) {
         const index = updatedQuotes.findIndex(quote => quote.text === serverQuote.text);
 
         if (index === -1) {
@@ -43,7 +44,7 @@ function syncQuotes(serverQuotes) {
             conflicts = true;
             updatedQuotes[index] = serverQuote;
         }
-    });
+    }
 
     if (conflicts) {
         notifyUser("Quotes have been updated from the server. Conflicts resolved.");
@@ -51,6 +52,27 @@ function syncQuotes(serverQuotes) {
 
     saveQuotes(updatedQuotes); // Save the updated quotes array
     filterQuotes(); // Refresh displayed quotes
+}
+
+// Post new quote to server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(quote)
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to post quote to server.");
+        }
+        const data = await response.json();
+        console.log("Quote posted successfully:", data);
+    } catch (error) {
+        console.error("Error posting quote to server:", error);
+    }
 }
 
 // Notify users about updates or conflicts
@@ -82,12 +104,14 @@ function showRandomQuote() {
 }
 
 // Add new quote through a form
-function addQuote() {
+async function addQuote() {
     const quoteText = document.getElementById("newQuoteText").value;
     const quoteCategory = document.getElementById("newQuoteCategory").value;
 
     if (quoteText && quoteCategory) {
-        quotes.push({ text: quoteText, category: quoteCategory });
+        const newQuote = { text: quoteText, category: quoteCategory };
+        quotes.push(newQuote);
+        await postQuoteToServer(newQuote); // Post to server
         saveQuotes();
         showRandomQuote(); // Show the newly added quote
         populateCategories(); // Update the category filter
@@ -167,4 +191,3 @@ document.addEventListener("DOMContentLoaded", () => {
     showRandomQuote();
     populateCategories(); // Populate categories on load
 });
-
