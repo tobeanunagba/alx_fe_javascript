@@ -1,9 +1,14 @@
-const quotes = loadQuotes();
+let quotes = loadQuotes();
 
 // Load quotes from local storage
 function loadQuotes() {
     const storedQuotes = localStorage.getItem("quotes");
-    return storedQuotes ? JSON.parse(storedQuotes) : [];
+    try {
+        return storedQuotes ? JSON.parse(storedQuotes) : [];
+    } catch (error) {
+        console.error("Error loading quotes from local storage:", error);
+        return [];
+    }
 }
 
 // Save quotes to local storage
@@ -42,15 +47,16 @@ async function syncQuotes(serverQuotes) {
             // If the quote exists, resolve conflicts by using the server version
             console.log(`Conflict detected for quote: "${serverQuote.text}". Using server version.`);
             conflicts = true;
-            updatedQuotes[index] = serverQuote;
+            updatedQuotes[index] = serverQuote; // Overwrite with server version
         }
     }
 
     if (conflicts) {
-        notifyUser("Quotes have been updated from the server. Conflicts resolved.");
+        notifyUser("Quotes have been updated from the server. Conflicts resolved.", "info");
     }
 
-    saveQuotes(updatedQuotes); // Save the updated quotes array
+    quotes = updatedQuotes; // Update the global quotes array
+    saveQuotes(); // Save the updated quotes array
     filterQuotes(); // Refresh displayed quotes
 }
 
@@ -70,20 +76,27 @@ async function postQuoteToServer(quote) {
         }
         const data = await response.json();
         console.log("Quote posted successfully:", data);
+        
+        // Update local quotes with the server response
+        quotes.push(data); // Assuming server returns the same structure
+        saveQuotes(); // Save the updated quotes
     } catch (error) {
         console.error("Error posting quote to server:", error);
+        notifyUser("Failed to post quote to server. Please try again.", "error");
     }
 }
 
 // Notify users about updates or conflicts
-function notifyUser(message) {
+function notifyUser(message, type = "info") {
     const notification = document.createElement("div");
     notification.textContent = message;
     notification.style.position = "fixed";
     notification.style.top = "10px";
     notification.style.right = "10px";
-    notification.style.background = "lightblue";
+    notification.style.background = type === "error" ? "salmon" : "lightblue"; // Different colors for different types
+    notification.style.color = "black";
     notification.style.padding = "10px";
+    notification.style.zIndex = 1000; // Ensure it appears on top
     document.body.appendChild(notification);
 
     // Automatically remove notification after 5 seconds
@@ -112,13 +125,12 @@ async function addQuote() {
         const newQuote = { text: quoteText, category: quoteCategory };
         quotes.push(newQuote);
         await postQuoteToServer(newQuote); // Post to server
-        saveQuotes();
         showRandomQuote(); // Show the newly added quote
         populateCategories(); // Update the category filter
         document.getElementById("newQuoteText").value = ""; // Clear input field
         document.getElementById("newQuoteCategory").value = ""; // Clear input field
     } else {
-        alert("Please enter both a quote and a category.");
+        notifyUser("Please enter both a quote and a category.", "error");
     }
 }
 
@@ -173,12 +185,17 @@ function exportToJson() {
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
     fileReader.onload = function(event) {
-        const importedQuotes = JSON.parse(event.target.result);
-        quotes.push(...importedQuotes);
-        saveQuotes();
-        populateCategories(); // Update category filter
-        filterQuotes(); // Refresh displayed quotes
-        alert('Quotes imported successfully!');
+        try {
+            const importedQuotes = JSON.parse(event.target.result);
+            quotes.push(...importedQuotes);
+            saveQuotes();
+            populateCategories(); // Update category filter
+            filterQuotes(); // Refresh displayed quotes
+            notifyUser('Quotes imported successfully!');
+        } catch (error) {
+            console.error("Error importing quotes:", error);
+            notifyUser("Failed to import quotes. Please ensure the file is valid.", "error");
+        }
     };
     fileReader.readAsText(event.target.files[0]);
 }
@@ -191,3 +208,4 @@ document.addEventListener("DOMContentLoaded", () => {
     showRandomQuote();
     populateCategories(); // Populate categories on load
 });
+
