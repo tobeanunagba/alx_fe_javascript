@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Quote Generator</title>
     <style>
-        /* Basic styles for the Dynamic Quote Generator */
+        /* Basic styling for the Dynamic Quote Generator */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f9f9f9;
             margin: 0;
             padding: 20px;
         }
@@ -17,28 +17,29 @@
         }
         #quoteDisplay {
             margin: 20px 0;
-            padding: 20px;
-            background-color: #ffffff;
+            padding: 15px;
+            background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         #newQuoteSection {
-            display: flex;
-            justify-content: space-between;
             margin: 20px 0;
+            display: flex;
+            gap: 10px;
         }
         #newQuoteSection input {
+            flex: 1;
             padding: 10px;
             font-size: 16px;
             border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 45%;
+            border: 1px solid #ddd;
         }
         #addQuoteBtn {
             padding: 10px 20px;
             font-size: 16px;
             background-color: #4caf50;
-            color: white;
+            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -46,35 +47,33 @@
         #addQuoteBtn:hover {
             background-color: #45a049;
         }
-        #categoryFilter {
-            padding: 10px;
-            font-size: 16px;
+        #newQuote {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
             border-radius: 4px;
-            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        #newQuote:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <h1>Dynamic Quote Generator</h1>
 
-    <!-- Quote display section -->
-    <div id="quoteDisplay"></div>
+    <!-- Quote display area -->
+    <div id="quoteDisplay">Your quote will appear here.</div>
     <button id="newQuote">Show New Quote</button>
 
     <!-- Section for adding new quotes -->
     <div id="newQuoteSection">
-        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+        <input type="text" id="newQuoteText" placeholder="Enter a new quote" />
+        <input type="text" id="newQuoteCategory" placeholder="Enter quote category" />
         <button id="addQuoteBtn">Add Quote</button>
-    </div>
-
-    <!-- Category filter dropdown -->
-    <div>
-        <label for="categoryFilter">Filter by Category:</label>
-        <select id="categoryFilter">
-            <option value="all">All Categories</option>
-            <!-- Dynamically populated categories will appear here -->
-        </select>
     </div>
 
     <script src="script.js"></script>
