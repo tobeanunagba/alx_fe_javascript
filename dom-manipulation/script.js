@@ -53,6 +53,8 @@ async function syncQuotes(serverQuotes) {
 
     if (conflicts) {
         notifyUser("Quotes have been updated from the server. Conflicts resolved.", "info");
+    } else {
+        alert("Quotes synced with server!"); // Alert for successful sync without conflicts
     }
 
     quotes = updatedQuotes; // Update the global quotes array
@@ -208,4 +210,3 @@ document.addEventListener("DOMContentLoaded", () => {
     showRandomQuote();
     populateCategories(); // Populate categories on load
 });
-
