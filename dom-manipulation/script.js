@@ -1,5 +1,56 @@
 let quotes = loadQuotes();
 
+function createAddQuoteForm() {
+    const formContainer = document.createElement("div");
+    formContainer.id = "addQuoteFormContainer";
+    formContainer.innerHTML = `
+        <form id="addQuoteForm">
+            <label for="newQuoteText">Quote:</label>
+            <input type="text" id="newQuoteText" placeholder="Enter the quote" required>
+            <label for="newQuoteCategory">Category:</label>
+            <input type="text" id="newQuoteCategory" placeholder="Enter the category" required>
+            <button type="submit">Add Quote</button>
+        </form>
+    `;
+    document.body.appendChild(formContainer);
+    async function addQuote() {
+    const quoteText = document.getElementById("newQuoteText").value;
+    const quoteCategory = document.getElementById("newQuoteCategory").value;
+
+    if (quoteText && quoteCategory) {
+        const newQuote = { text: quoteText, category: quoteCategory };
+        quotes.push(newQuote); // Add the new quote to the array
+        await postQuoteToServer(newQuote); // Optionally sync with the server
+        saveQuotes(); // Save the updated array to local storage
+        filterQuotes(); // Refresh the displayed quotes based on the current filter
+        showRandomQuote(); // Optionally show the newly added quote
+
+        // Clear the input fields after adding
+        document.getElementById("newQuoteText").value = "";
+        document.getElementById("newQuoteCategory").value = "";
+    } else {
+        notifyUser("Please enter both a quote and a category.", "error");
+    }
+}
+// Event listener for the "Show New Quote" button
+document.getElementById("showNewQuoteBtn").addEventListener("click", showRandomQuote);
+
+
+    // Attach an event listener to handle the form submission
+    document.getElementById("addQuoteForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the form from submitting the traditional way
+        addQuote(); // Call the addQuote function to add the new quote
+    });
+}
+
+// Initialize the add quote form when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    createAddQuoteForm();
+    showRandomQuote();
+    populateCategories();
+});
+
+
 // Load quotes from local storage
 function loadQuotes() {
     const storedQuotes = localStorage.getItem("quotes");
